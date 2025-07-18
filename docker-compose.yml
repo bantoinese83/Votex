@@ -1,26 +1,118 @@
 version: '3.8'
 
 services:
+  # Database
   postgres:
     image: postgres:15-alpine
-    restart: always
+    container_name: votex-postgres
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=vortexdb
-    ports:
-      - '5432:5432'
+      POSTGRES_DB: vortexdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d vortexdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - votex-network
 
+  # Redis Cache
   redis:
     image: redis:7-alpine
-    restart: always
+    container_name: votex-redis
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - votex-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: votex-backend
+    environment:
+      ENVIRONMENT: development
+      PORT: 8080
+      DB_URL: postgres://user:password@postgres:5432/vortexdb?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      LOG_LEVEL: debug
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - votex-network
+    restart: unless-stopped
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: votex-frontend
+    environment:
+      VITE_API_URL: http://localhost:8080
+      VITE_APP_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - votex-network
+    restart: unless-stopped
+
+  # Development frontend (for hot reloading)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: votex-frontend-dev
+    environment:
+      VITE_API_URL: http://localhost:8080
+      VITE_APP_ENV: development
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - votex-network
+    profiles:
+      - dev
 
 volumes:
   postgres_data:
+    driver: local
   redis_data:
+    driver: local
+
+networks:
+  votex-network:
+    driver: bridge
