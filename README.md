@@ -64,9 +64,10 @@ A comprehensive, production-ready full-stack application featuring a **Go backen
 #### **8. Frontend Component Library**
 - **Reusable UI components** (Button, Input, Card, Modal)
 - **TypeScript support** with full type safety
-- **Accessibility features** (ARIA labels, keyboard navigation)
+- **Accessibility features** (ARIA labels, keyboard navigation, unique IDs, autocomplete)
 - **Responsive design** with Tailwind CSS
-- **Theme support** (light/dark mode)
+- **Theme support** (light/dark mode ready)
+- **Form validation** with proper error handling
 
 #### **9. Error Handling and User Feedback**
 - **Comprehensive error handling** system
@@ -163,11 +164,22 @@ frontend/
 
 ### **1. Clone and Setup**
 ```bash
-git clone <repository-url>
+git clone https://github.com/bantoinese83/Votex.git
 cd votex-template
 ```
 
-### **2. Backend Setup**
+### **2. Quick Start (Recommended)**
+```bash
+# Install dependencies and start both services
+npm install
+npm run dev
+```
+
+This will start both the backend and frontend simultaneously.
+
+### **3. Manual Setup (Alternative)**
+
+#### **Backend Setup**
 ```bash
 cd backend
 
@@ -185,7 +197,7 @@ docker-compose up -d postgres
 go run cmd/server/main.go
 ```
 
-### **3. Frontend Setup**
+#### **Frontend Setup**
 ```bash
 cd frontend
 
@@ -242,30 +254,46 @@ PUT /api/auth/profile
 Authorization: Bearer <token>
 {
   "username": "newusername",
-  "email": "newemail@example.com",
-  "age": 25
+  "email": "newemail@example.com"
 }
+
+# Delete Account (authenticated)
+DELETE /api/auth/account
+Authorization: Bearer <token>
 ```
 
 ### **User Management Endpoints**
 ```bash
-# List Users (authenticated)
-GET /api/users?page=1&limit=20&search=user
+# List Users (authenticated, admin only)
+GET /api/users?page=1&limit=20
 
-# Get User (authenticated)
+# Get User by ID (authenticated)
 GET /api/users/{id}
 
-# Update User (authenticated)
+# Update User (authenticated, admin only)
 PUT /api/users/{id}
 Authorization: Bearer <token>
 {
   "username": "newusername",
-  "email": "newemail@example.com"
+  "email": "newemail@example.com",
+  "is_active": true
 }
 
-# Delete User (authenticated)
+# Delete User (authenticated, admin only)
 DELETE /api/users/{id}
 Authorization: Bearer <token>
+```
+
+### **System Endpoints**
+```bash
+# Health Check
+GET /health
+
+# API Documentation
+GET /api/docs
+
+# OpenAPI Specification
+GET /openapi.yaml
 ```
 
 ## 🔧 **Configuration**
@@ -329,6 +357,19 @@ npm run test:e2e
 
 # Type checking
 npm run check
+```
+
+### **API Testing**
+```bash
+# Test all endpoints
+curl http://localhost:8080/health
+curl http://localhost:8080/api/docs
+curl http://localhost:8080/openapi.yaml
+
+# Test authentication
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","email":"test@example.com","password":"testpass123"}'
 ```
 
 ## 🚀 **Deployment**
