@@ -1,133 +1,428 @@
-# Votex Template 🚀
+# Vortex Template - Production-Ready Full-Stack Application
 
-[![Go Version](https://img.shields.io/badge/Go-1.24.2+-00ADD8?logo=go&logoColor=white)](https://golang.org/)
-[![Node.js Version](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-2.22.0-FF3E00?logo=svelte&logoColor=white)](https://kit.svelte.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Required-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+A comprehensive, production-ready full-stack application featuring a **Go backend** with **SvelteKit frontend**, designed with modern DevOps practices and a unique **PostgreSQL/SQLite fallback system**.
 
-A modern, full-stack web application template built with **Go** backend and **SvelteKit** frontend, featuring authentication, internationalization, database management, and comprehensive development tools.
+## 🚀 **What's New - Complete Feature Set**
 
-## 🏗️ Architecture
+### **✅ High Priority Features (Production Ready)**
 
-This template uses a clean, modular architecture to promote separation of concerns and scalability.
+#### **1. Complete API Documentation**
+- **OpenAPI 3.1.0 Specification** with comprehensive endpoint documentation
+- **Interactive Swagger UI** at `/api/docs`
+- **Complete request/response schemas** for all endpoints
+- **Authentication flows** and error handling documentation
+- **Rate limiting** and security headers documentation
 
-- **Backend:** The Go backend is structured using a layered architecture, separating the API handlers, business logic (services), and data access (stores).
-- **Frontend:** The SvelteKit frontend is structured to separate UI components, features, API communication, and state management.
-- **API:** The frontend and backend communicate via a REST API defined by the `openapi.yaml` specification.
+#### **2. Enhanced Authentication System**
+- **JWT-based authentication** with secure token handling
+- **Password reset functionality** with email verification
+- **Email service** with SMTP configuration
+- **Secure token generation** with crypto/rand
+- **Token expiration** and cleanup mechanisms
+- **Account management** (update profile, delete account)
 
+#### **3. CI/CD Pipeline**
+- **GitHub Actions** workflow with comprehensive testing
+- **Automated testing** (unit, integration, E2E)
+- **Security scanning** with Trivy vulnerability scanner
+- **Code quality checks** (linting, type checking)
+- **Docker image building** and pushing
+- **Staging and production deployment** environments
+- **Coverage reporting** with Codecov integration
+
+#### **4. Security Enhancements**
+- **Rate limiting middleware** (configurable per IP)
+- **Security headers** (CSP, X-Frame-Options, HSTS, etc.)
+- **Input validation** and sanitization
+- **SQL injection prevention** with parameterized queries
+- **XSS protection** with proper content types
+- **CORS configuration** with origin validation
+
+#### **5. Basic CRUD Operations**
+- **User management API** with full CRUD operations
+- **Pagination support** for list endpoints
+- **Search functionality** (framework ready)
+- **Role-based access control** (framework ready)
+- **Data validation** with detailed error messages
+
+### **✅ Medium Priority Features (Scaling Ready)**
+
+#### **6. Monitoring and Observability**
+- **Structured logging** with configurable levels
+- **Health check endpoints** with detailed status
+- **Error tracking** and logging infrastructure
+- **Performance monitoring** ready
+- **Request/response logging** middleware
+
+#### **7. Database Management**
+- **Migration system** for both PostgreSQL and SQLite
+- **Database seeding** framework
+- **Schema versioning** with up/down migrations
+- **Automatic cleanup** of expired tokens
+- **Connection pooling** and optimization
+
+#### **8. Frontend Component Library**
+- **Reusable UI components** (Button, Input, Card, Modal)
+- **TypeScript support** with full type safety
+- **Accessibility features** (ARIA labels, keyboard navigation)
+- **Responsive design** with Tailwind CSS
+- **Theme support** (light/dark mode)
+
+#### **9. Error Handling and User Feedback**
+- **Comprehensive error handling** system
+- **User-friendly error messages** with notifications
+- **Form validation** with field-level errors
+- **Retry mechanisms** for failed requests
+- **Global error boundaries** and logging
+
+#### **10. Performance Optimization**
+- **Rate limiting** to prevent abuse
+- **Caching headers** for static assets
+- **Database query optimization** with indexes
+- **Frontend code splitting** and lazy loading
+- **Image optimization** and compression
+
+## 🏗️ **Architecture Overview**
+
+### **Backend Architecture**
 ```
-votex-template/
-├── backend/
-│   ├── cmd/server/main.go
-│   ├── internal/
-│   │   ├── api/
-│   │   ├── service/
-│   │   └── store/
-│   └── pkg/router/
-├── frontend/
-│   ├── src/
-│   │   └── lib/
-│   │       ├── api/
-│   │       ├── components/
-│   │       ├── features/
-│   │       ├── stores/
-│   │       └── types/
-│   └── ...
-├── docker-compose.yml
-├── openapi.yaml
-���── package.json
+backend/
+├── cmd/server/          # Application entry point
+├── internal/
+│   ├── api/            # HTTP handlers and request/response models
+│   ├── config/         # Configuration management with validation
+│   ├── middleware/     # HTTP middleware (auth, CORS, rate limiting, security)
+│   ├── service/        # Business logic layer with email service
+│   └── store/          # Data access layer with interfaces
+├── migrations/         # Database migration files
+│   ├── postgres/       # PostgreSQL-specific migrations
+│   └── sqlite/         # SQLite-specific migrations
+├── pkg/
+│   ├── logger/         # Structured logging utilities
+│   └── router/         # HTTP router setup
+└── tests/              # Comprehensive test suite
 ```
 
-## 🛠️ Tech Stack
+### **Frontend Architecture**
+```
+frontend/
+├── src/
+│   ├── lib/
+│   │   ├── components/ # Reusable UI components
+│   │   │   └── ui/     # Base UI components (Button, Input, Card, Modal)
+│   │   ├── stores/     # Svelte stores for state management
+│   │   ├── server/     # Server-side utilities (auth, db)
+│   │   ├── api/        # API client and types
+│   │   └── utils/      # Utility functions (error handling, validation)
+│   ├── routes/         # SvelteKit pages and layouts
+│   └── app.html        # HTML template
+├── static/             # Static assets
+├── messages/           # Internationalization files
+└── tests/              # Frontend tests (unit, E2E)
+```
 
-### Backend
-![Go](https://img.shields.io/badge/Go-1.24.2+-00ADD8?logo=go&logoColor=white)
-- **Go 1.24.2** - High-performance server language
-- **Chi** - Lightweight, idiomatic router
-- **sqlx** - Extensions to Go's standard database/sql library
+## 🛠️ **Technology Stack**
 
-### Frontend
-![SvelteKit](https://img.shields.io/badge/SvelteKit-2.22.0-FF3E00?logo=svelte&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwind-css&logoColor=white)
-- **SvelteKit 2.22.0** - Full-stack web framework
-- **TypeScript** - Type-safe development
-- **TailwindCSS 4.0** - Utility-first CSS framework
+### **Backend**
+- **Language**: Go 1.24+
+- **Framework**: Chi router with middleware
+- **Database**: **PostgreSQL 17** with **SQLite fallback**
+- **Database Driver**: sqlx with automatic query adaptation
+- **Cache**: Redis (configured)
+- **Authentication**: JWT with bcrypt
+- **Email**: SMTP with configurable providers
+- **Validation**: go-playground/validator
+- **Configuration**: Viper with environment support
+- **Testing**: Go testing with mocks
+- **Security**: Rate limiting, security headers, CORS
 
-### Database & Cache
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?logo=redis&logoColor=white)
-- **PostgreSQL 15** - Primary database
-- **Redis** - Caching & session storage
+### **Frontend**
+- **Framework**: SvelteKit with TypeScript
+- **Styling**: Tailwind CSS with custom components
+- **State Management**: Svelte stores
+- **Authentication**: JWT with secure storage
+- **UI Components**: Custom component library
+- **Testing**: Vitest (unit) + Playwright (E2E)
+- **Build Tool**: Vite with optimization
+- **Linting**: ESLint + Prettier
 
-## 🚀 Quick Start
+### **DevOps**
+- **CI/CD**: GitHub Actions
+- **Containerization**: Docker with multi-stage builds
+- **Security**: Trivy vulnerability scanning
+- **Monitoring**: Structured logging + health checks
+- **Deployment**: Docker Compose + Kubernetes ready
 
-### Prerequisites
-- **Node.js** 18+
-- **Go** 1.24+
-- **Docker** & **Docker Compose**
-- **Git**
+## 🚀 **Quick Start**
 
-### 1. Clone & Setup
+### **Prerequisites**
+- Go 1.24+
+- Node.js 20+
+- PostgreSQL 17 (optional, SQLite fallback available)
+- Docker (optional)
+
+### **1. Clone and Setup**
 ```bash
-git clone https://github.com/bantoinese83/Votex.git
-cd Votex
+git clone <repository-url>
+cd votex-template
 ```
 
-### 2. Install Dependencies
+### **2. Backend Setup**
 ```bash
-# Install all dependencies (root + frontend)
-make install
+cd backend
+
+# Copy environment file
+cp app.env.example app.env
+
+# Install dependencies
+go mod download
+
+# Run with SQLite (no setup required)
+go run cmd/server/main.go
+
+# Or with PostgreSQL
+docker-compose up -d postgres
+go run cmd/server/main.go
 ```
 
-### 3. Start Database Services
+### **3. Frontend Setup**
 ```bash
-# Start PostgreSQL and Redis
-docker-compose up -d
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-### 4. Start Development Servers
-```bash
-# Run both frontend and backend
-make dev
-```
-
-Your application will be available at:
+### **4. Access the Application**
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8080
+- **API Documentation**: http://localhost:8080/api/docs
+- **Health Check**: http://localhost:8080/health
 
-## 📋 Available Commands
+## 📚 **API Documentation**
 
-See the `Makefile` for a full list of available commands.
+### **Authentication Endpoints**
+```bash
+# Register
+POST /api/auth/register
+{
+  "username": "user",
+  "email": "user@example.com",
+  "password": "password123"
+}
 
-- `make dev`: Run both frontend and backend
-- `make dev-frontend`: Run only frontend
-- `make dev-backend`: Run only backend
-- `make install`: Install all dependencies
-- `make test`: Run frontend tests
-- `make lint`: Run frontend linter
-- `make format`: Format frontend code
+# Login
+POST /api/auth/login
+{
+  "username": "user",
+  "password": "password123"
+}
 
-## 🌐 API Endpoints
+# Request Password Reset
+POST /api/auth/password-reset
+{
+  "email": "user@example.com"
+}
 
-See the `openapi.yaml` file for a full list of API endpoints.
+# Reset Password
+POST /api/auth/password-reset/{token}
+{
+  "password": "newpassword123"
+}
 
-- `GET /` - Health check
+# Get Profile (authenticated)
+GET /api/auth/profile
+Authorization: Bearer <token>
 
-## 🤝 Contributing
+# Update Profile (authenticated)
+PUT /api/auth/profile
+Authorization: Bearer <token>
+{
+  "username": "newusername",
+  "email": "newemail@example.com",
+  "age": 25
+}
+```
+
+### **User Management Endpoints**
+```bash
+# List Users (authenticated)
+GET /api/users?page=1&limit=20&search=user
+
+# Get User (authenticated)
+GET /api/users/{id}
+
+# Update User (authenticated)
+PUT /api/users/{id}
+Authorization: Bearer <token>
+{
+  "username": "newusername",
+  "email": "newemail@example.com"
+}
+
+# Delete User (authenticated)
+DELETE /api/users/{id}
+Authorization: Bearer <token>
+```
+
+## 🔧 **Configuration**
+
+### **Environment Variables**
+```bash
+# Core Configuration
+ENVIRONMENT=development
+PORT=8080
+
+# Database
+DB_URL=postgres://user:pass@localhost:5432/db
+DB_TYPE=postgres
+SQLITE_PATH=./data/votex.db
+
+# Email Configuration
+SMTP_HOST=localhost
+SMTP_PORT=587
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_FROM=noreply@vortex.com
+
+# Password Reset
+PASSWORD_RESET_TOKEN_EXPIRY=24
+APP_URL=http://localhost:5173
+
+# Rate Limiting
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_BURST=20
+
+# Security
+JWT_SECRET=your-secret-key
+CORS_ORIGINS=http://localhost:5173
+```
+
+## 🧪 **Testing**
+
+### **Backend Tests**
+```bash
+cd backend
+
+# Run all tests
+go test ./...
+
+# Run with coverage
+go test -cover ./...
+
+# Run specific test
+go test ./internal/service -v
+```
+
+### **Frontend Tests**
+```bash
+cd frontend
+
+# Unit tests
+npm run test:unit
+
+# E2E tests
+npm run test:e2e
+
+# Type checking
+npm run check
+```
+
+## 🚀 **Deployment**
+
+### **Docker Deployment**
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Or build individual services
+docker build -t vortex-backend ./backend
+docker build -t vortex-frontend ./frontend
+```
+
+### **Production Deployment**
+```bash
+# Set production environment
+export ENVIRONMENT=production
+export JWT_SECRET=your-production-secret
+
+# Run migrations
+go run cmd/server/main.go
+
+# Or use Docker
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## 📊 **Monitoring**
+
+### **Health Checks**
+- **Backend**: `GET /health`
+- **Database**: Automatic connection monitoring
+- **Email Service**: SMTP connection validation
+
+### **Logging**
+```bash
+# Structured JSON logging in production
+LOG_LEVEL=info
+
+# Development logging
+LOG_LEVEL=debug
+```
+
+### **Error Tracking**
+- Global error handling with context
+- Error logging with stack traces
+- User-friendly error messages
+- Retry mechanisms for transient failures
+
+## 🔒 **Security Features**
+
+### **Backend Security**
+- JWT authentication with secure token handling
+- Password hashing with bcrypt
+- Rate limiting per IP address
+- Security headers (CSP, X-Frame-Options, HSTS)
+- Input validation and sanitization
+- SQL injection prevention
+- CORS configuration with origin validation
+
+### **Frontend Security**
+- Secure token storage
+- XSS protection
+- CSRF protection
+- Content Security Policy
+- Input validation and sanitization
+
+### **Infrastructure Security**
+- Non-root container execution
+- Read-only filesystems
+- Resource limits
+- Security scanning in CI/CD
+- Dependency auditing
+
+## 🤝 **Contributing**
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests: `make test`
-5. Format code: `make format`
+4. Add tests for new functionality
+5. Ensure all tests pass
 6. Submit a pull request
 
-## 📄 License
+## 📄 **License**
 
-MIT License - see LICENSE file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 **Support**
+
+- **Documentation**: Check the API docs at `/api/docs`
+- **Issues**: Create an issue on GitHub
+- **Discussions**: Use GitHub Discussions for questions
+
+---
+
+**Vortex Template** - A production-ready foundation for your next full-stack application! 🚀
 

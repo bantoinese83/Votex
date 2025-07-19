@@ -18,7 +18,7 @@ export interface ApiError {
 class ApiClient {
 	private baseURL: string;
 
-	constructor(baseURL: string = '/api') {
+	constructor(baseURL: string = 'http://localhost:8080/api') {
 		this.baseURL = baseURL;
 	}
 

@@ -1,14 +1,25 @@
-# Build stage
-FROM node:18-alpine AS builder
+# Multi-stage build for SvelteKit frontend
+FROM node:20-alpine AS deps
 
-# Set working directory
+# Install dependencies only when needed
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production && npm cache clean --force
+
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -17,29 +28,30 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 # Create non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
 
-# Set working directory
 WORKDIR /app
 
-# Copy built application from builder stage
-COPY --from=builder --chown=appuser:appgroup /app/build ./build
-COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
-COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
+# Copy built application
+COPY --from=builder --chown=nextjs:nodejs /app/build ./build
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+# Copy production dependencies
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 # Switch to non-root user
-USER appuser
+USER nextjs
 
 # Expose port
-EXPOSE 3000
+EXPOSE 5173
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:5173 || exit 1
 
 # Start the application
-CMD ["node", "build"] 
+CMD ["npm", "run", "preview"] 
