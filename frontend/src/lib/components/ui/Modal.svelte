@@ -12,8 +12,16 @@
 		open: void;
 	}>();
 
+	let modalElement: HTMLDivElement;
+
 	function handleOverlayClick(event: MouseEvent) {
 		if (closeOnOverlayClick && event.target === event.currentTarget) {
+			close();
+		}
+	}
+
+	function handleOverlayKeydown(event: KeyboardEvent) {
+		if (closeOnOverlayClick && event.key === 'Enter') {
 			close();
 		}
 	}
@@ -52,15 +60,26 @@
 			}
 		};
 	});
+
+	// Focus management
+	$: if (open && modalElement) {
+		// Focus the modal when it opens
+		setTimeout(() => {
+			modalElement?.focus();
+		}, 100);
+	}
 </script>
 
 {#if open}
 	<div
+		bind:this={modalElement}
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-200"
 		on:click={handleOverlayClick}
+		on:keydown={handleOverlayKeydown}
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="modal-title"
+		tabindex="-1"
 	>
 		<div class="relative w-full {sizeClasses[size]} mx-4">
 			<div class="bg-white rounded-lg shadow-xl transform transition-all duration-200">

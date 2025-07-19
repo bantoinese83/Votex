@@ -175,12 +175,14 @@
 					<h4 class="text-xl font-semibold text-gray-900 mb-6">Form Components</h4>
 					<form on:submit|preventDefault={handleSubmit} class="space-y-4">
 						<Input
+							name="username"
 							label="Username"
 							bind:value={username}
 							placeholder="Enter username"
 							required
 						/>
 						<Input
+							name="email"
 							type="email"
 							label="Email"
 							bind:value={email}
@@ -188,6 +190,7 @@
 							required
 						/>
 						<Input
+							name="password"
 							type="password"
 							label="Password"
 							bind:value={password}

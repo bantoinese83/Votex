@@ -11,6 +11,7 @@
 	export let label = '';
 	export let error = '';
 	export let fullWidth = false;
+	export let autocomplete: string | undefined = undefined;
 
 	const dispatch = createEventDispatcher<{
 		input: string;
@@ -18,6 +19,25 @@
 		focus: FocusEvent;
 		blur: FocusEvent;
 	}>();
+
+	// Generate unique ID if not provided
+	$: uniqueId = id || `${name || type}-${Math.random().toString(36).substr(2, 9)}`;
+
+	// Set appropriate autocomplete based on type and name
+	$: autoCompleteValue = autocomplete || (() => {
+		switch (type) {
+			case 'email':
+				return 'email';
+			case 'password':
+				return name?.includes('password') ? 'current-password' : 'new-password';
+			case 'text':
+				if (name?.includes('username') || name?.includes('user')) return 'username';
+				if (name?.includes('name')) return 'name';
+				return 'off';
+			default:
+				return 'off';
+		}
+	})();
 
 	function handleInput(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -49,7 +69,7 @@
 
 <div class="space-y-1">
 	{#if label}
-		<label for={id || name} class="block text-sm font-medium text-gray-700">
+		<label for={uniqueId} class="block text-sm font-medium text-gray-700">
 			{label}
 			{#if required}
 				<span class="text-red-500 ml-1">*</span>
@@ -64,18 +84,19 @@
 		{disabled}
 		{required}
 		{name}
-		{id}
+		id={uniqueId}
+		autocomplete={autoCompleteValue as any}
 		class={inputClasses}
 		on:input={handleInput}
 		on:change={handleChange}
 		on:focus={handleFocus}
 		on:blur={handleBlur}
 		aria-invalid={error ? 'true' : 'false'}
-		aria-describedby={error ? `${id || name}-error` : undefined}
+		aria-describedby={error ? `${uniqueId}-error` : undefined}
 	/>
 	
 	{#if error}
-		<p id="{id || name}-error" class="text-sm text-red-600">
+		<p id="{uniqueId}-error" class="text-sm text-red-600">
 			{error}
 		</p>
 	{/if}
